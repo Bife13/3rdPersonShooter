@@ -3,6 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "CGLTPersonShooterCharacter.h"
+#include "Components/BoxComponent.h"
+#include "Particles/ParticleSystem.h"
 #include "UObject/Interface.h"
 #include "SkillActor.generated.h"
 
@@ -25,4 +28,5 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void SetValues(int TeamValue, float DamageValue, float RangeValue, FVector SpawnPositionVector,
 	               APawn* OwnerCharacter);
+	
 };

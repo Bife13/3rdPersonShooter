@@ -54,6 +54,8 @@ ACGLTPersonShooterCharacter::ACGLTPersonShooterCharacter()
 	// Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+	HealthComponent = CreateDefaultSubobject<UHealthSystem>(TEXT("Health Component"));
+	
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
@@ -150,6 +152,7 @@ void ACGLTPersonShooterCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
+	CachedMovementVector = MovementVector;
 
 	if (Controller != nullptr)
 	{
@@ -203,7 +206,8 @@ void ACGLTPersonShooterCharacter::PopulateSkillArray()
 	}
 }
 
-FRotator ACGLTPersonShooterCharacter::CalculateShootingAngle(const UArrowComponent* InitialPoint,const float Range) const
+FRotator ACGLTPersonShooterCharacter::CalculateShootingAngle(const FVector InitialPoint,
+                                                             const float Range) const
 {
 	const FVector TraceStart = GetFollowCamera()->GetComponentLocation();
 	const FVector TraceEnd = (UKismetMathLibrary::GetForwardVector(
@@ -214,37 +218,37 @@ FRotator ACGLTPersonShooterCharacter::CalculateShootingAngle(const UArrowCompone
 
 	if (UKismetSystemLibrary::LineTraceSingle(CachedWorld, TraceStart, TraceEnd,
 	                                          ETraceTypeQuery::TraceTypeQuery1, true, ActorsToIgnore,
-	                                          EDrawDebugTrace::ForDuration, OutHit, true))
+	                                          EDrawDebugTrace::Persistent, OutHit, true))
 	{
-		return UKismetMathLibrary::FindLookAtRotation(InitialPoint->GetComponentLocation(), OutHit.ImpactPoint);
+		return UKismetMathLibrary::FindLookAtRotation(InitialPoint, OutHit.ImpactPoint);
 	}
-	return UKismetMathLibrary::FindLookAtRotation(InitialPoint->GetComponentLocation(), TraceEnd);
+	return UKismetMathLibrary::FindLookAtRotation(InitialPoint, TraceEnd);
 }
 
 void ACGLTPersonShooterCharacter::UseBasicAttack()
 {
-	CachedMouseRotator = CalculateShootingAngle(ShootingPoint, AttackRange);
-	GEngine->AddOnScreenDebugMessage(1, .5f, FColor::Red,TEXT("Shot"));
+	// GEngine->AddOnScreenDebugMessage(1, .5f, FColor::Red,TEXT("Shot"));
 	if (RuntimeSkills.IsValidIndex(0) && !GetIsCasting() && RuntimeSkills[0]->bCanUse)
 	{
+		CachedMouseRotator = CalculateShootingAngle(ShootingPoint->GetComponentLocation(), AttackRange);
 		RuntimeSkills[0]->CastSkill(AttackAnimations[0]);
 	}
 }
 
 void ACGLTPersonShooterCharacter::UseFirstAbility()
 {
-	CachedMouseRotator = CalculateShootingAngle(ShootingPoint, AttackRange);
+	CachedMouseRotator = CalculateShootingAngle(ShootingPoint->GetComponentLocation(), AttackRange);
 	GEngine->AddOnScreenDebugMessage(1, .5f, FColor::Blue,TEXT("First"));
 }
 
 void ACGLTPersonShooterCharacter::UseSecondAbility()
 {
-	CachedMouseRotator = CalculateShootingAngle(ShootingPoint, AttackRange);
+	CachedMouseRotator = CalculateShootingAngle(ShootingPoint->GetComponentLocation(), AttackRange);
 	GEngine->AddOnScreenDebugMessage(1, .5f, FColor::Green,TEXT("Second"));
 }
 
 void ACGLTPersonShooterCharacter::UseThirdAbility()
 {
-	CachedMouseRotator = CalculateShootingAngle(ShootingPoint, AttackRange);
+	CachedMouseRotator = CalculateShootingAngle(ShootingPoint->GetComponentLocation(), AttackRange);
 	GEngine->AddOnScreenDebugMessage(1, .5f, FColor::Black,TEXT("Third"));
 }

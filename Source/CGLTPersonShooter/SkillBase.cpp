@@ -14,6 +14,9 @@ void USkillBase::InitializeSkill(ACharacter* Playable, UWorld* World, int Team)
 	TeamId = Team;
 	CachedCharacterInterface = Cast<IUsableCharacterSkillSlot>(OwnerCharacter);
 	bCanUse = true;
+	
+	
+	
 	OnInitialize();
 }
 
@@ -29,7 +32,7 @@ void USkillBase::CastSkill(UAnimMontage* AnimationToPlay)
 	}
 	else
 	{
-		GEngine->AddOnScreenDebugMessage(1, 2, FColor::Red, "On Cooldown");
+	GEngine->AddOnScreenDebugMessage(15, .5f, FColor::Black,TEXT("On Cooldown"));
 	}
 }
 
@@ -38,7 +41,15 @@ void USkillBase::UseSkill()
 	const ACGLTPersonShooterCharacter* PlayableCharacter = Cast<ACGLTPersonShooterCharacter>(OwnerCharacter);
 	AbilityRotation = PlayableCharacter->CachedMouseRotator;
 	CachedCharacterInterface->SetIsCasting(false);
+	StartCooldownTimer();
 	OnUse();
+}
+
+void USkillBase::StartCooldownTimer()
+{
+	FTimerHandle THandle;
+	const float Delay = AbilityCooldown;
+	CachedWorld->GetTimerManager().SetTimer(THandle, this, &USkillBase::ResetCooldown, Delay, false);
 }
 
 void USkillBase::SpawnSkillActor(const FVector& SpawnPosition)

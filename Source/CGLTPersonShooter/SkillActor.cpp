@@ -3,4 +3,7 @@
 
 #include "SkillActor.h"
 
-// Add default functionality here for any ISkillActor functions that are not pure virtual.
+#include "Components/ArrowComponent.h"
+#include "Kismet/GameplayStatics.h"
+
+

@@ -20,6 +20,7 @@ public:
 	virtual void InitializeSkill(ACharacter* Playable, UWorld* World, int Team) override;
 	UFUNCTION(BlueprintCallable)
 	virtual void UseSkill() override;
+	void StartCooldownTimer();
 	virtual void CastSkill(UAnimMontage* AnimationToPlay) override;
 
 	UFUNCTION()
@@ -56,7 +57,7 @@ public:
 	float AbilityRange;
 	UFUNCTION(BlueprintCallable)
 	void SetAbilityRange(float Range);
-	
+
 	UPROPERTY(BlueprintReadWrite)
 	bool bCanUse;
 
@@ -67,7 +68,7 @@ public:
 	IUsableCharacterSkillSlot* CachedCharacterInterface;
 
 
-	UPROPERTY(EditInstanceOnly, BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TSubclassOf<AActor> ActorToSpawn;
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite)
 	TSubclassOf<AActor> CastEffectToSpawn;

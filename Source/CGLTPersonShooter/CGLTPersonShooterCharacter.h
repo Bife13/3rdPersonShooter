@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "HealthSystem.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
 #include "SkillBase.h"
@@ -63,14 +64,23 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Health)
+	UHealthSystem* HealthComponent;
+
 	UFUNCTION()
 	virtual bool GetIsCasting() override;
 	UFUNCTION()
 	virtual void SetIsCasting(bool Value) override;
 
+	UFUNCTION()
+	UArrowComponent* GetShootingPoint() const { return ShootingPoint; }
 
 	UPROPERTY()
 	FRotator CachedMouseRotator;
+
+	UPROPERTY()
+	FVector2D CachedMovementVector;
+
 
 protected:
 	/** Called for movement input */
@@ -115,7 +125,7 @@ protected:
 	void PopulateSkillArray();
 
 	UFUNCTION()
-	FRotator CalculateShootingAngle(const UArrowComponent* InitialPoint,const float Range) const;
+	FRotator CalculateShootingAngle(const FVector InitialPoint, const float Range) const;
 
 	UPROPERTY(EditAnywhere)
 	TArray<TSubclassOf<USkillBase>> Skills;
