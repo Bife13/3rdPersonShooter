@@ -20,14 +20,13 @@ UHealthSystem::UHealthSystem()
 void UHealthSystem::BeginPlay()
 {
 	Super::BeginPlay();
-	SetHealthToMaxHealth();
 }
 
 void UHealthSystem::TakeDamage(float Amount)
 {
-    GEngine->AddOnScreenDebugMessage(INDEX_NONE,1,FColor::Red, TEXT("HIT"));
 	if (Amount > 0)
 	{
+		GEngine->AddOnScreenDebugMessage(INDEX_NONE,1,FColor::Red, FString::Printf(TEXT("%f"), Amount));
 		Health -= Amount;
 	}
 

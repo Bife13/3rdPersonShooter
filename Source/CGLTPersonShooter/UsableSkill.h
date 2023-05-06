@@ -24,5 +24,5 @@ class CGLTPERSONSHOOTER_API IUsableSkill
 public:
 	virtual void InitializeSkill(ACharacter* Playable, UWorld* World,int Team) = 0;
 	virtual void UseSkill() = 0;
-	virtual void CastSkill(UAnimMontage* AnimationToPlay) = 0;
+	virtual void CastSkill(UAnimMontage* AnimationToPlay, float CooldownModifier) = 0;
 };

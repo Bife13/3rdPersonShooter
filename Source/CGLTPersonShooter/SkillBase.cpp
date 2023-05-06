@@ -20,12 +20,13 @@ void USkillBase::InitializeSkill(ACharacter* Playable, UWorld* World, int Team)
 	OnInitialize();
 }
 
-void USkillBase::CastSkill(UAnimMontage* AnimationToPlay)
+void USkillBase::CastSkill(UAnimMontage* AnimationToPlay, float CooldownModifier)
 {
 	if (bCanUse)
 	{
 		CachedCharacterInterface->SetIsCasting(true);
 		AttackAnimation = AnimationToPlay;
+		SetCooldownModifier(CooldownModifier);
 		bCanUse = false;
 		// HandleCastEvents(AbilityCooldown);
 		OnCast();

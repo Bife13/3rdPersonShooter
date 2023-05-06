@@ -55,7 +55,8 @@ ACGLTPersonShooterCharacter::ACGLTPersonShooterCharacter()
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
 	HealthComponent = CreateDefaultSubobject<UHealthSystem>(TEXT("Health Component"));
-	
+	StatComponent = CreateDefaultSubobject<UStatSystem>(TEXT("Stat Component"));
+
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
@@ -82,6 +83,9 @@ void ACGLTPersonShooterCharacter::BeginPlay()
 	}
 
 	PopulateSkillArray();
+
+	HealthComponent->SetMaxHealth(StatComponent->GetMaxHealth());
+	HealthComponent->SetHealthToMaxHealth();
 }
 
 void ACGLTPersonShooterCharacter::Tick(float DeltaSeconds)
@@ -146,6 +150,16 @@ void ACGLTPersonShooterCharacter::SetupPlayerInputComponent(class UInputComponen
 		EnhancedInputComponent->BindAction(ThirdAbilityAction, ETriggerEvent::Triggered, this,
 		                                   &ACGLTPersonShooterCharacter::UseThirdAbility);
 	}
+}
+
+void ACGLTPersonShooterCharacter::TakeDamage(float Amount)
+{
+	HealthComponent->TakeDamage(Amount);
+}
+
+void ACGLTPersonShooterCharacter::RecoverHealth(float Amount)
+{
+	HealthComponent->RecoverHealth(Amount);
 }
 
 void ACGLTPersonShooterCharacter::Move(const FInputActionValue& Value)
@@ -231,7 +245,7 @@ void ACGLTPersonShooterCharacter::UseBasicAttack()
 	if (RuntimeSkills.IsValidIndex(0) && !GetIsCasting() && RuntimeSkills[0]->bCanUse)
 	{
 		CachedMouseRotator = CalculateShootingAngle(ShootingPoint->GetComponentLocation(), AttackRange);
-		RuntimeSkills[0]->CastSkill(AttackAnimations[0]);
+		RuntimeSkills[0]->CastSkill(AttackAnimations[0], StatComponent->GetAttackSpeedAsCooldown());
 	}
 }
 

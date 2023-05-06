@@ -9,7 +9,7 @@
 
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class CGLTPERSONSHOOTER_API UHealthSystem : public UActorComponent, public IDamageable
+class CGLTPERSONSHOOTER_API UHealthSystem : public UActorComponent
 {
 	GENERATED_BODY()
 
@@ -24,10 +24,10 @@ protected:
 public:
 	// Called every frame
 	// virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	UFUNCTION(BlueprintCallable)
-	virtual void TakeDamage(float Amount) override;
-	UFUNCTION(BlueprintCallable)
-	virtual void RecoverHealth(float Amount) override;
+	UFUNCTION()
+	void TakeDamage(float Amount);
+	UFUNCTION()
+	void RecoverHealth(float Amount);
 
 	UFUNCTION(BlueprintPure)
 	float GetHealth() const;
@@ -45,9 +45,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere)
 	float Health;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(VisibleAnywhere)
 	float MaxHealth;
-	
+
 	// UPROPERTY(VisibleAnywhere, Replicated)
 	// float Shield;
 	// UPROPERTY(VisibleAnywhere)

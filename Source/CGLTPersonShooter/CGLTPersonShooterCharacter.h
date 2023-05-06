@@ -6,56 +6,67 @@
 #include "HealthSystem.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
+#include "InputMappingQuery.h"
 #include "SkillBase.h"
+#include "StatSystem.h"
 #include "UsableCharacterSkillSlot.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "CGLTPersonShooterCharacter.generated.h"
 
 
+
 UCLASS(config=Game)
-class ACGLTPersonShooterCharacter : public ACharacter, public IUsableCharacterSkillSlot
+class ACGLTPersonShooterCharacter : public ACharacter, public IUsableCharacterSkillSlot, public IDamageable
 {
 	GENERATED_BODY()
 
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class USpringArmComponent* CameraBoom;
-
+	TObjectPtr<USpringArmComponent> CameraBoom;
+	
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class UCameraComponent* FollowCamera;
+	TObjectPtr<UCameraComponent> FollowCamera;
 
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputMappingContext* DefaultMappingContext;
+	TObjectPtr<UInputMappingContext> DefaultMappingContext;
 
 	/** Jump Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* JumpAction;
+	TObjectPtr<UInputAction> JumpAction;
 
 	/** Move Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* MoveAction;
+	TObjectPtr<UInputAction> MoveAction;
 
 	/** Look Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* LookAction;
+	TObjectPtr<UInputAction> LookAction;
 
 	/** Basic Attack Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* BasicAttackAction;
+	TObjectPtr<UInputAction> BasicAttackAction;
 
 	/** First Ability Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* FirstAbilityAction;
+	TObjectPtr<UInputAction> FirstAbilityAction;
 
 	/** Second Ability Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* SecondAbilityAction;
+	TObjectPtr<UInputAction> SecondAbilityAction;
 
 	/** Third Ability Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* ThirdAbilityAction;
+	TObjectPtr<UInputAction> ThirdAbilityAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Health, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UHealthSystem> HealthComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stats, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UStatSystem> StatComponent;
+	
 public:
 	ACGLTPersonShooterCharacter();
 
@@ -64,8 +75,6 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Health)
-	UHealthSystem* HealthComponent;
 
 	UFUNCTION()
 	virtual bool GetIsCasting() override;
@@ -80,6 +89,11 @@ public:
 
 	UPROPERTY()
 	FVector2D CachedMovementVector;
+
+	UFUNCTION(BlueprintCallable)
+	virtual void TakeDamage(float Amount) override;
+	UFUNCTION(BlueprintCallable)
+	virtual void RecoverHealth(float Amount) override;
 
 
 protected:

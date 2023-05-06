@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "UsableCharacterSkillSlot.h"
 #include "UsableSkill.h"
-#include "UObject/NoExportTypes.h"
 #include "SkillBase.generated.h"
 
 /**
@@ -21,7 +20,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void UseSkill() override;
 	void StartCooldownTimer();
-	virtual void CastSkill(UAnimMontage* AnimationToPlay) override;
+	virtual void CastSkill(UAnimMontage* AnimationToPlay, float CooldownModifier) override;
 
 	UFUNCTION()
 	void ResetCooldown();
@@ -35,8 +34,12 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditInstanceOnly)
 	float AbilityCooldown;
+	UPROPERTY(BlueprintReadWrite, EditInstanceOnly)
+	float AbilityCooldownModifier;
 	UFUNCTION(BlueprintCallable)
 	void SetCooldown(float Cooldown);
+	UFUNCTION()
+	void SetCooldownModifier(float Amount) {AbilityCooldownModifier = Amount;}
 
 	UPROPERTY(BlueprintReadWrite, EditInstanceOnly)
 	float AbilityCastTime;
